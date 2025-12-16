@@ -68,7 +68,7 @@ export default function Home() {
 						</p>
 					</div>
 
-					<div className="max-w-6xl grid grid-cols-2 md:grid-cols-3 gap-6 mx-auto">
+					<div className="max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mx-auto">
 						<Card className="transition-shadow hover:shadow-lg">
 							<CardHeader>
 								<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
@@ -139,6 +139,25 @@ export default function Home() {
 								</CardDescription>
 							</CardHeader>
 						</Card>
+					</div>
+				</div>
+			</section>
+
+			<section className="px-4 py-20">
+				<div className="container mx-auto rounded-xl py-12 px-8 bg-primary">
+					<div className="text-center">
+						<h2 className="text-3xl md:text-4xl mb-3 font-bold text-background text-balance tracking-tight">
+							Ready to Build Your Online CV?
+						</h2>
+						<p className="text-lg md:text-xl text-pretty max-w-2xl mx-auto my-6 leading-relaxed text-background">
+							Join professionals creating beautiful online CVs that stand out
+						</p>
+						<Button
+							variant="secondary"
+							className="w-full max-w-sm font-semibold cursor-pointer"
+						>
+							Get Started Now
+						</Button>
 					</div>
 				</div>
 			</section>
