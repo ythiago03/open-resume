@@ -4,6 +4,7 @@ import {
 	Blocks,
 	Download,
 	Eye,
+	Heart,
 	Link2,
 	Palette,
 	PanelsTopLeft,
@@ -51,7 +52,12 @@ export default function Home() {
 							variant="outline"
 							asChild
 						>
-							<Link href="/">Learn More</Link>
+							<Link
+								href="https://github.com/sponsors/ythiago03"
+								target="_blank"
+							>
+								<Heart className="text-pink-400" /> Sponsor
+							</Link>
 						</Button>
 					</div>
 				</div>
