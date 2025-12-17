@@ -20,6 +20,38 @@ import {
 } from "@/components/ui/card";
 
 export default function Home() {
+	const featuresCards = [
+		{
+			name: "Profile Photos",
+			desc: "Add your professional photo to create a personal connection with viewers",
+			Icon: Palette,
+		},
+		{
+			name: "Custom Blocks",
+			desc: "Add projects, skills, links, and more—build your CV your way",
+			Icon: Blocks,
+		},
+		{
+			name: "Social Links",
+			desc: "Connect your LinkedIn, GitHub, portfolio, and other profiles",
+			Icon: Link2,
+		},
+		{
+			name: "Live Preview",
+			desc: "See your changes in real-time with our split-screen editor",
+			Icon: Eye,
+		},
+		{
+			name: "Easy Sharing",
+			desc: "Share your CV with a simple link or download as PDF",
+			Icon: Download,
+		},
+		{
+			name: "Flexible Layouts",
+			desc: "Arrange your content blocks in the order that tells your story best",
+			Icon: PanelsTopLeft,
+		},
+	];
 	return (
 		<main>
 			<section className="container mx-auto px-4 py-20 md:py-32">
@@ -75,76 +107,17 @@ export default function Home() {
 					</div>
 
 					<div className="max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mx-auto">
-						<Card className="transition-shadow hover:shadow-lg">
-							<CardHeader>
-								<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
-									<Palette className="size-7" />
-								</div>
-								<CardTitle className="text-2xl mb-4">Profile Photos</CardTitle>
-								<CardDescription className="text-lg">
-									Add your professional photo to create a personal connection
-									with viewers
-								</CardDescription>
-							</CardHeader>
-						</Card>
-						<Card className="transition-shadow hover:shadow-lg">
-							<CardHeader>
-								<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
-									<Blocks className="size-7" />
-								</div>
-								<CardTitle className="text-2xl mb-4">Custom Blocks</CardTitle>
-								<CardDescription className="text-lg">
-									Add projects, skills, links, and more—build your CV your way{" "}
-								</CardDescription>
-							</CardHeader>
-						</Card>
-						<Card className="transition-shadow hover:shadow-lg">
-							<CardHeader>
-								<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
-									<Link2 className="size-7" />
-								</div>
-								<CardTitle className="text-2xl mb-4">Social Links</CardTitle>
-								<CardDescription className="text-lg">
-									Connect your LinkedIn, GitHub, portfolio, and other profiles
-								</CardDescription>
-							</CardHeader>
-						</Card>
-						<Card className="transition-shadow hover:shadow-lg">
-							<CardHeader>
-								<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
-									<Eye className="size-7" />
-								</div>
-								<CardTitle className="text-2xl mb-4">Live Preview</CardTitle>
-								<CardDescription className="text-lg">
-									See your changes in real-time with our split-screen editor
-								</CardDescription>
-							</CardHeader>
-						</Card>
-						<Card className="transition-shadow hover:shadow-lg">
-							<CardHeader>
-								<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
-									<Download className="size-7" />
-								</div>
-								<CardTitle className="text-2xl mb-4">Easy Sharing</CardTitle>
-								<CardDescription className="text-lg">
-									Share your CV with a simple link or download as PDF
-								</CardDescription>
-							</CardHeader>
-						</Card>
-						<Card className="transition-shadow hover:shadow-lg">
-							<CardHeader>
-								<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
-									<PanelsTopLeft className="size-7" />
-								</div>
-								<CardTitle className="text-2xl mb-4">
-									Flexible Layouts
-								</CardTitle>
-								<CardDescription className="text-lg">
-									Arrange your content blocks in the order that tells your story
-									best
-								</CardDescription>
-							</CardHeader>
-						</Card>
+						{featuresCards.map(({ name, desc, Icon }) => (
+							<Card key={name} className="transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<div className="p-3 w-fit mb-6 text-primary bg-primary/10 rounded-xl">
+										<Icon className="size-7" />
+									</div>
+									<CardTitle className="text-2xl mb-4">{name}</CardTitle>
+									<CardDescription className="text-lg">{desc}</CardDescription>
+								</CardHeader>
+							</Card>
+						))}
 					</div>
 				</div>
 			</section>
