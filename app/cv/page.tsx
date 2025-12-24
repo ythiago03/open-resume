@@ -24,7 +24,15 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Download, Eye, FileText, Save } from "lucide-react";
+import {
+	ArrowLeft,
+	Download,
+	Eye,
+	FileText,
+	Plus,
+	Save,
+	Trash2,
+} from "lucide-react";
 import Link from "next/link";
 
 const page = () => {
@@ -79,10 +87,10 @@ const page = () => {
 								<form className="overflow-y-auto">
 									<FieldGroup className="px-6">
 										<FieldSet>
-											<FieldLegend className="font-semibold !text-xl">
-												Template Design
-											</FieldLegend>
 											<FieldGroup className="gap-2">
+												<FieldLegend className="font-semibold !text-xl">
+													Template Design
+												</FieldLegend>
 												<Field className="w-fit">
 													<FieldLabel
 														htmlFor="template"
@@ -110,6 +118,13 @@ const page = () => {
 														Preview updates instantly on the right panel
 													</FieldDescription>
 												</Field>
+											</FieldGroup>
+										</FieldSet>
+
+										<FieldSeparator />
+
+										<FieldSet>
+											<FieldGroup className="gap-2">
 												<FieldLegend className="font-semibold !text-xl">
 													Personal Info
 												</FieldLegend>
@@ -147,6 +162,7 @@ const page = () => {
 														id="bio"
 														placeholder="A short bio about yourself..."
 														className="resize-vertical"
+														rows={4}
 													/>
 												</Field>
 												<Field>
@@ -162,49 +178,81 @@ const page = () => {
 														required
 													/>
 												</Field>
-											</FieldGroup>
-										</FieldSet>
-										<FieldSeparator />
-										<FieldSet>
-											<FieldLegend>Billing Address</FieldLegend>
-											<FieldDescription>
-												The billing address associated with your payment method
-											</FieldDescription>
-											<FieldGroup>
-												<Field orientation="horizontal">
-													{/* <Checkbox
-														id="checkout-7j9-same-as-shipping-wgm"
-														defaultChecked
-													/> */}
-													<FieldLabel
-														htmlFor="checkout-7j9-same-as-shipping-wgm"
-														className="font-normal"
-													>
-														Same as shipping address
-													</FieldLabel>
-												</Field>
-											</FieldGroup>
-										</FieldSet>
-										<FieldSet>
-											<FieldGroup>
 												<Field>
-													<FieldLabel htmlFor="checkout-7j9-optional-comments">
-														Comments
+													<FieldLabel
+														className="font-semibold"
+														htmlFor="profilePicture"
+													>
+														Profile Image
 													</FieldLabel>
-													<Textarea
-														id="checkout-7j9-optional-comments"
-														placeholder="Add any additional comments"
-														className="resize-none"
-													/>
+													<Input id="profilePicture" type="file" />
 												</Field>
 											</FieldGroup>
 										</FieldSet>
-										<Field orientation="horizontal">
-											<Button type="submit">Submit</Button>
-											<Button variant="outline" type="button">
-												Cancel
-											</Button>
-										</Field>
+
+										<FieldSeparator />
+
+										<FieldSet>
+											<FieldGroup className="gap-2">
+												<div className="flex justify-between items-center">
+													<FieldLegend className="font-semibold !text-xl">
+														Social Links
+													</FieldLegend>
+
+													<Button variant="outline" className="cursor-pointer">
+														<Plus /> Add Link
+													</Button>
+												</div>
+
+												<Card className="grid grid-cols-[1fr_auto] gap-4 px-4">
+													<FieldGroup className="gap-2">
+														<Input
+															id="platformName"
+															placeholder="Platform (e.g., LinkedIn)"
+														/>
+														<Input id="platformLink" placeholder="URL" />
+													</FieldGroup>
+													<Button
+														variant="ghost"
+														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+													>
+														<Trash2 />
+													</Button>
+												</Card>
+											</FieldGroup>
+										</FieldSet>
+
+										<FieldSeparator />
+
+										<FieldSet>
+											<FieldGroup className="gap-2">
+												<FieldLegend className="font-semibold !text-xl">
+													Content Blocks
+												</FieldLegend>
+												<Field className="grid grid-cols-[1fr_auto]">
+													<Select>
+														<SelectTrigger id="template">
+															<SelectValue placeholder="About" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="about">About</SelectItem>
+															<SelectItem value="links">Links</SelectItem>
+															<SelectItem value="projects">Projects</SelectItem>
+															<SelectItem value="skills">Skills</SelectItem>
+															<SelectItem value="expirience">
+																Expirience
+															</SelectItem>
+															<SelectItem value="education">
+																Education
+															</SelectItem>
+														</SelectContent>
+													</Select>
+													<Button className="cursor-pointer">
+														<Plus /> Add Block
+													</Button>
+												</Field>
+											</FieldGroup>
+										</FieldSet>
 									</FieldGroup>
 								</form>
 							</Card>
