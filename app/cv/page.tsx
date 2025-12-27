@@ -1,41 +1,68 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowLeft, Download, Eye, FileText, Save } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import {
-	Field,
-	FieldDescription,
-	FieldGroup,
-	FieldLabel,
-	FieldLegend,
-	FieldSeparator,
-	FieldSet,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import {
-	ArrowLeft,
-	Download,
-	Eye,
-	FileText,
-	Plus,
-	Save,
-	Trash2,
-} from "lucide-react";
-import Link from "next/link";
+
+import EditorForm from "@/components/templates/EditorForm";
+import type { ResumeData } from "../types/ResumeData";
+import EditorPreview from "@/components/templates/EditorPreview";
+import { useState } from "react";
+
+const cvData: ResumeData = {
+	personalInfo: {
+		fullName: "Thiago Fidêncio",
+		profileImg: "https://via.placeholder.com/150",
+		tagline: "Software Engineer",
+		bio: "I'm a passionate software engineer with a focus on building innovative solutions.",
+		location: "New York, USA",
+	},
+	socialLinks: [
+		{
+			id: "1",
+			platform: "LinkedIn",
+			url: "https://www.linkedin.com/in/johndoe/",
+			icon: "",
+		},
+		{
+			id: "2",
+			platform: "Github",
+			url: "https://www.linkedin.com/in/johndoe/",
+			icon: "",
+		},
+		{
+			id: "3",
+			platform: "Twitter",
+			url: "https://www.linkedin.com/in/johndoe/",
+			icon: "",
+		},
+	],
+	blocks: [
+		{
+			id: "1",
+			type: "about",
+			title: "About Me",
+			order: 0,
+			visible: true,
+			data: {
+				content:
+					"I'm a passionate software engineer with a focus on building innovative solutions.",
+			},
+		},
+	],
+};
 
 const page = () => {
+	const [editorResume, setEditorResume] = useState<ResumeData>(cvData);
+
 	return (
 		<div>
 			<header className="sticky top-0 z-50 border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -84,177 +111,10 @@ const page = () => {
 
 								<Separator />
 
-								<form className="overflow-y-auto">
-									<FieldGroup className="px-6">
-										<FieldSet>
-											<FieldGroup className="gap-2">
-												<FieldLegend className="font-semibold !text-xl">
-													Template Design
-												</FieldLegend>
-												<Field className="w-fit">
-													<FieldLabel
-														htmlFor="template"
-														className="font-semibold"
-													>
-														Choose Template
-													</FieldLabel>
-													<Select defaultValue="">
-														<SelectTrigger id="template">
-															<SelectValue placeholder="Centered - Clean card-based layout" />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectItem value="centered">
-																Centered - Clean card-based layout
-															</SelectItem>
-															<SelectItem value="vibrant">
-																Vibrant - Colorful gradient design
-															</SelectItem>
-															<SelectItem value="elegant">
-																Elegant - Sophisticated typography
-															</SelectItem>
-														</SelectContent>
-													</Select>
-													<FieldDescription>
-														Preview updates instantly on the right panel
-													</FieldDescription>
-												</Field>
-											</FieldGroup>
-										</FieldSet>
-
-										<FieldSeparator />
-
-										<FieldSet>
-											<FieldGroup className="gap-2">
-												<FieldLegend className="font-semibold !text-xl">
-													Personal Info
-												</FieldLegend>
-												<Field>
-													<FieldLabel
-														className="font-semibold"
-														htmlFor="fullName"
-													>
-														Full Name
-													</FieldLabel>
-													<Input
-														id="fullName"
-														placeholder="John Doe"
-														required
-													/>
-												</Field>
-												<Field>
-													<FieldLabel
-														className="font-semibold"
-														htmlFor="tagline"
-													>
-														Tagline
-													</FieldLabel>
-													<Input
-														id="tagline"
-														placeholder="Product Designer & Developer"
-														required
-													/>
-												</Field>
-												<Field>
-													<FieldLabel className="font-semibold" htmlFor="bio">
-														Bio
-													</FieldLabel>
-													<Textarea
-														id="bio"
-														placeholder="A short bio about yourself..."
-														className="resize-vertical"
-														rows={4}
-													/>
-												</Field>
-												<Field>
-													<FieldLabel
-														className="font-semibold"
-														htmlFor="location"
-													>
-														Location
-													</FieldLabel>
-													<Input
-														id="location"
-														placeholder="San Francisco, CA"
-														required
-													/>
-												</Field>
-												<Field>
-													<FieldLabel
-														className="font-semibold"
-														htmlFor="profilePicture"
-													>
-														Profile Image
-													</FieldLabel>
-													<Input id="profilePicture" type="file" />
-												</Field>
-											</FieldGroup>
-										</FieldSet>
-
-										<FieldSeparator />
-
-										<FieldSet>
-											<FieldGroup className="gap-2">
-												<div className="flex justify-between items-center">
-													<FieldLegend className="font-semibold !text-xl">
-														Social Links
-													</FieldLegend>
-
-													<Button variant="outline" className="cursor-pointer">
-														<Plus /> Add Link
-													</Button>
-												</div>
-
-												<Card className="grid grid-cols-[1fr_auto] gap-4 px-4">
-													<FieldGroup className="gap-2">
-														<Input
-															id="platformName"
-															placeholder="Platform (e.g., LinkedIn)"
-														/>
-														<Input id="platformLink" placeholder="URL" />
-													</FieldGroup>
-													<Button
-														variant="ghost"
-														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-													>
-														<Trash2 />
-													</Button>
-												</Card>
-											</FieldGroup>
-										</FieldSet>
-
-										<FieldSeparator />
-
-										<FieldSet>
-											<FieldGroup className="gap-2">
-												<FieldLegend className="font-semibold !text-xl">
-													Content Blocks
-												</FieldLegend>
-												<Field className="grid grid-cols-[1fr_auto]">
-													<Select>
-														<SelectTrigger id="template">
-															<SelectValue placeholder="About" />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectItem value="about">About</SelectItem>
-															<SelectItem value="links">Links</SelectItem>
-															<SelectItem value="projects">Projects</SelectItem>
-															<SelectItem value="skills">Skills</SelectItem>
-															<SelectItem value="expirience">
-																Expirience
-															</SelectItem>
-															<SelectItem value="education">
-																Education
-															</SelectItem>
-														</SelectContent>
-													</Select>
-													<Button className="cursor-pointer">
-														<Plus /> Add Block
-													</Button>
-												</Field>
-											</FieldGroup>
-										</FieldSet>
-									</FieldGroup>
-								</form>
+								<EditorForm
+									resumeData={editorResume}
+									changeResumeData={setEditorResume}
+								/>
 							</Card>
 						</div>
 					</ResizablePanel>
@@ -265,7 +125,9 @@ const page = () => {
 								<CardTitle className="text-lg">Edit Content</CardTitle>
 								<CardDescription>See your changes in real-time</CardDescription>
 							</div>
-							<Card className="h-full w-full overflow-hidden"></Card>
+							<Card className="h-full w-full overflow-hidden">
+								<EditorPreview resumeData={editorResume} />
+							</Card>
 						</div>
 					</ResizablePanel>
 				</ResizablePanelGroup>
