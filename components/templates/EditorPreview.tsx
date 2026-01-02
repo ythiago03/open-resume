@@ -2,12 +2,43 @@ import type { ResumeData } from "@/app/types/ResumeData";
 import { MapPin, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { Card, CardContent, CardTitle } from "../ui/card";
 
 interface EditorPreviewProps {
 	resumeData: ResumeData;
 }
 
 const EditorPreview = ({ resumeData }: EditorPreviewProps) => {
+	const createAboutContents = (): {
+		id: string;
+		order: number;
+		content: React.JSX.Element;
+	}[] => {
+		const aboutBlocks = resumeData.blocks.filter(
+			(block) => block.type === "about",
+		);
+
+		return aboutBlocks.map((block) => ({
+			id: block.id,
+			order: block.order,
+			content: (
+				<Card key={block.id} className="text-start">
+					<CardTitle className="px-6 text-xl md:text-2xl mt-4">
+						{block.title}
+					</CardTitle>
+					<CardContent>
+						<p className="text-muted-foreground text-pretty">
+							{block.data.content}
+						</p>
+					</CardContent>
+				</Card>
+			),
+		}));
+	};
+
+	const allBlocks = [...createAboutContents()];
+	const ordenedBlocks = allBlocks.sort((a, b) => a.order - b.order);
+
 	return (
 		<section className="flex flex-col items-center text-center p-6">
 			<div className="flex flex-col items-center text-center">
@@ -32,6 +63,12 @@ const EditorPreview = ({ resumeData }: EditorPreviewProps) => {
 							</Link>{" "}
 							<SquareArrowOutUpRight />
 						</Button>
+					))}
+				</div>
+
+				<div className="space-y-4 mt-6">
+					{ordenedBlocks.map(({ id, content }) => (
+						<div key={id}>{content}</div>
 					))}
 				</div>
 			</div>

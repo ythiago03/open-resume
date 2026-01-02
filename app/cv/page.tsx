@@ -57,6 +57,16 @@ const cvData: ResumeData = {
 					"I'm a passionate software engineer with a focus on building innovative solutions.",
 			},
 		},
+		{
+			id: "2",
+			type: "skills",
+			title: "Skills",
+			order: 0,
+			visible: true,
+			data: {
+				content: ["react"],
+			},
+		},
 	],
 };
 
