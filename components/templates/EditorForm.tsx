@@ -23,7 +23,12 @@ import {
 
 import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
 
-import type { CvSocialLink, ResumeData } from "@/app/types/ResumeData";
+import type {
+	AboutBlock,
+	CvBlockTypes,
+	CvSocialLink,
+	ResumeData,
+} from "@/app/types/ResumeData";
 import { useState } from "react";
 import {
 	Accordion,
@@ -38,10 +43,6 @@ interface EditorFormProps {
 }
 
 const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
-	const aboutBlocks = resumeData.blocks.filter(
-		(block) => block.type === "about",
-	);
-
 	const [selectedBlock, setSelectedBlock] = useState<string>("about");
 
 	const updateLink = (link: CvSocialLink) => {
@@ -74,22 +75,40 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 		});
 	};
 
-	const addBlock = (type: string) => {
+	const addBlock = (type: "about" | "skills") => {
 		const uuid = crypto.randomUUID();
-		const newBlock = {
-			id: uuid,
-			type: type,
-			title: "About",
-			order: 0,
-			visible: true,
-			data: {
-				content: "",
-			},
-		};
+		const newBlocks = [];
+
+		if (type === "about") {
+			const newBlock: AboutBlock = {
+				id: uuid,
+				type: type,
+				title: "About",
+				order: 0,
+				visible: true,
+				data: {
+					description: "",
+				},
+			};
+			newBlocks.push(newBlock);
+		}
+		if (type === "skills") {
+			const newBlock = {
+				id: uuid,
+				type: type,
+				title: "Skills",
+				order: 0,
+				visible: true,
+				data: {
+					skills: [],
+				},
+			};
+			newBlocks.push(newBlock);
+		}
 
 		changeResumeData({
 			...resumeData,
-			blocks: [...resumeData.blocks, newBlock],
+			blocks: [...resumeData.blocks, ...newBlocks],
 		});
 	};
 
@@ -104,7 +123,7 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 					? {
 							...block,
 							title: content.title ?? block.title,
-							data: { content: content.content ?? block.data.content },
+							data: { description: content.content ?? block.data.description },
 						}
 					: block,
 			),
@@ -336,7 +355,7 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 							</Select>
 							<Button
 								type="button"
-								onClick={() => addBlock(selectedBlock)}
+								onClick={() => addBlock(selectedBlock as "about" | "skills")}
 								className="cursor-pointer"
 							>
 								<Plus /> Add Block
@@ -344,172 +363,160 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 						</Field>
 
 						<Accordion type="single" collapsible className="w-full px-2">
-							{aboutBlocks.map((block) => (
-								<div key={block.id} className="border-b">
-									<AccordionItem value={block.id} className="border-b">
-										<div className="flex items-center gap-2">
-											<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
-												{block.title}
-												{!block.visible && (
-													<EyeOff className="size-4 text-muted-foreground" />
-												)}
-											</AccordionTrigger>
-											<Button
-												type="button"
-												onClick={() => toggleBlockView(block.id)}
-												variant="ghost"
-												className="cursor-pointer"
-											>
-												{block.visible ? <Eye /> : <EyeOff />}
-											</Button>
-											<Button
-												type="button"
-												onClick={() => deleteBlock(block.id)}
-												variant="ghost"
-												className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-											>
-												<Trash2 />
-											</Button>
+							{resumeData.blocks.map(
+								(block) =>
+									block.type === "about" && (
+										<div key={block.id} className="border-b">
+											<AccordionItem value={block.id} className="border-b">
+												<div className="flex items-center gap-2">
+													<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
+														{block.title}
+														{!block.visible && (
+															<EyeOff className="size-4 text-muted-foreground" />
+														)}
+													</AccordionTrigger>
+													<Button
+														type="button"
+														onClick={() => toggleBlockView(block.id)}
+														variant="ghost"
+														className="cursor-pointer"
+													>
+														{block.visible ? <Eye /> : <EyeOff />}
+													</Button>
+													<Button
+														type="button"
+														onClick={() => deleteBlock(block.id)}
+														variant="ghost"
+														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+													>
+														<Trash2 />
+													</Button>
+												</div>
+												<AccordionContent className="flex flex-col gap-4 mt-4">
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="aboutTitle"
+														>
+															Block Title
+														</FieldLabel>
+														<Input
+															id="aboutTitle"
+															placeholder="About"
+															value={block.title}
+															onChange={(e) =>
+																changeAboutBlock(block.id, {
+																	title: e.target.value,
+																})
+															}
+															required
+														/>
+													</Field>
+
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="aboutContent"
+														>
+															About Content
+														</FieldLabel>
+														<Textarea
+															id="aboutContent"
+															placeholder="Tell your story..."
+															className="resize-vertical"
+															value={block.data.description}
+															onChange={(e) =>
+																changeAboutBlock(block.id, {
+																	content: e.target.value,
+																})
+															}
+															rows={4}
+														/>
+													</Field>
+												</AccordionContent>
+											</AccordionItem>
 										</div>
-										<AccordionContent className="flex flex-col gap-4 mt-4">
-											<Field>
-												<FieldLabel
-													className="font-semibold"
-													htmlFor="aboutTitle"
-												>
-													Block Title
-												</FieldLabel>
-												<Input
-													id="aboutTitle"
-													placeholder="About"
-													value={block.title}
-													onChange={(e) =>
-														changeAboutBlock(block.id, {
-															title: e.target.value,
-														})
-													}
-													required
-												/>
-											</Field>
+									),
+							)}
 
-											<Field>
-												<FieldLabel
-													className="font-semibold"
-													htmlFor="aboutContent"
-												>
-													About Content
-												</FieldLabel>
-												<Textarea
-													id="aboutContent"
-													placeholder="Tell your story..."
-													className="resize-vertical"
-													value={block.data.content}
-													onChange={(e) =>
-														changeAboutBlock(block.id, {
-															content: e.target.value,
-														})
-													}
-													rows={4}
-												/>
-											</Field>
-										</AccordionContent>
-									</AccordionItem>
-								</div>
-							))}
-							<div className="border-b">
-								<AccordionItem value="skills">
-									<div className="flex items-center gap-2">
-										<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
-											Skills
-											{/* {!block.visible && (
-													<EyeOff className="size-4 text-muted-foreground" />
-												)} */}
-										</AccordionTrigger>
-										<Button
-											type="button"
-											// onClick={() => toggleBlockView(block.id)}
-											variant="ghost"
-											className="cursor-pointer"
-										>
-											{/* {block.visible ? <Eye /> : <EyeOff />} */}
-											<Eye />
-										</Button>
-										<Button
-											type="button"
-											// onClick={() => deleteBlock(block.id)}
-											variant="ghost"
-											className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-										>
-											<Trash2 />
-										</Button>
-									</div>
+							{resumeData.blocks.map(
+								(block) =>
+									block.type === "skills" && (
+										<div key={block.id} className="border-b">
+											<AccordionItem value="skills">
+												<div className="flex items-center gap-2">
+													<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
+														{block.title}
+														{!block.visible && (
+															<EyeOff className="size-4 text-muted-foreground" />
+														)}
+													</AccordionTrigger>
+													<Button
+														type="button"
+														onClick={() => toggleBlockView(block.id)}
+														variant="ghost"
+														className="cursor-pointer"
+													>
+														{block.visible ? <Eye /> : <EyeOff />}
+													</Button>
+													<Button
+														type="button"
+														onClick={() => deleteBlock(block.id)}
+														variant="ghost"
+														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+													>
+														<Trash2 />
+													</Button>
+												</div>
 
-									<AccordionContent className="flex flex-col gap-4 mt-4">
-										<Field>
-											<FieldLabel
-												className="font-semibold"
-												htmlFor="skillBlockTittle"
-											>
-												Block Title
-											</FieldLabel>
-											<Input
-												id="skillBlockTittle"
-												placeholder="Skills"
-												// value={block.title}
-												// onChange={(e) =>
-												// 	changeAboutBlock(block.id, {
-												// 		title: e.target.value,
-												// 	})
-												// }
-												required
-											/>
-										</Field>
+												<AccordionContent className="flex flex-col gap-4 mt-4">
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="skillBlockTittle"
+														>
+															Block Title
+														</FieldLabel>
+														<Input
+															id="skillBlockTittle"
+															placeholder="Skills"
+															value={block.title}
+															// onChange={(e) =>
+															// 	changeAboutBlock(block.id, {
+															// 		title: e.target.value,
+															// 	})
+															// }
+															required
+														/>
+													</Field>
 
-										<div className="grid grid-cols-2 gap-4">
-											<div className="flex gap-2">
-												<Input placeholder="Skill name" />
-												<Button
-													type="button"
-													// onClick={() => deleteBlock(block.id)}
-													variant="ghost"
-													className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-												>
-													<Trash2 />
-												</Button>
-											</div>
-											<div className="flex gap-2">
-												<Input placeholder="Skill name" />
-												<Button
-													type="button"
-													// onClick={() => deleteBlock(block.id)}
-													variant="ghost"
-													className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-												>
-													<Trash2 />
-												</Button>
-											</div>
-											<div className="flex gap-2">
-												<Input placeholder="Skill name" />
-												<Button
-													type="button"
-													// onClick={() => deleteBlock(block.id)}
-													variant="ghost"
-													className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-												>
-													<Trash2 />
-												</Button>
-											</div>
+													<div className="grid grid-cols-2 gap-4">
+														{block.data.skills.map((skill: string) => (
+															<div key={skill} className="flex gap-2">
+																<Input placeholder="Skill name" value={skill} />
+																<Button
+																	type="button"
+																	// onClick={() => deleteBlock(block.id)}
+																	variant="ghost"
+																	className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+																>
+																	<Trash2 />
+																</Button>
+															</div>
+														))}
+													</div>
+
+													<Button
+														className="font-semibold cursor-pointer"
+														variant="outline"
+													>
+														<Plus /> Add Skill
+													</Button>
+												</AccordionContent>
+											</AccordionItem>
 										</div>
-
-										<Button
-											className="font-semibold cursor-pointer"
-											variant="outline"
-										>
-											<Plus /> Add Skill
-										</Button>
-									</AccordionContent>
-								</AccordionItem>
-							</div>
+									),
+							)}
 						</Accordion>
 					</FieldGroup>
 				</FieldSet>

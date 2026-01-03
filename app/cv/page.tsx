@@ -21,8 +21,8 @@ const cvData: ResumeData = {
 	personalInfo: {
 		fullName: "Thiago Fidêncio",
 		profileImg: "https://via.placeholder.com/150",
-		tagline: "Software Engineer",
-		bio: "I'm a passionate software engineer with a focus on building innovative solutions.",
+		tagline: "Product Designer & Creative Developer",
+		bio: "I create beautiful, accessible digital experiences that bridge the gap between design and technology..",
 		location: "New York, USA",
 	},
 	socialLinks: [
@@ -49,12 +49,12 @@ const cvData: ResumeData = {
 		{
 			id: "1",
 			type: "about",
-			title: "About Me",
+			title: "About",
 			order: 0,
 			visible: true,
 			data: {
-				content:
-					"I'm a passionate software engineer with a focus on building innovative solutions.",
+				description:
+					"I'm a designer and developer passionate about creating delightful user experiences. With over 5 years of experience in the industry, I specialize in building design systems and crafting interfaces that are both beautiful and functional.",
 			},
 		},
 		{
@@ -64,7 +64,7 @@ const cvData: ResumeData = {
 			order: 0,
 			visible: true,
 			data: {
-				content: ["react"],
+				skills: ["React", "Next.js", "Tailwindcss", "Typescript", "Figma"],
 			},
 		},
 	],
