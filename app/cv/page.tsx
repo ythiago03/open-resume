@@ -64,7 +64,13 @@ const cvData: ResumeData = {
 			order: 0,
 			visible: true,
 			data: {
-				skills: ["React", "Next.js", "Tailwindcss", "Typescript", "Figma"],
+				skills: [
+					{ id: "1", name: "React" },
+					{ id: "2", name: "Next.js" },
+					{ id: "3", name: "Tailwindcss" },
+					{ id: "4", name: "Typescript" },
+					{ id: "5", name: "Figma" },
+				],
 			},
 		},
 	],
@@ -132,7 +138,7 @@ const page = () => {
 					<ResizablePanel defaultSize={50} minSize={45}>
 						<div className="flex flex-col h-[calc(100vh-70px)] p-6">
 							<div className="px-2 mb-4">
-								<CardTitle className="text-lg">Edit Content</CardTitle>
+								<CardTitle className="text-lg">Live Preview</CardTitle>
 								<CardDescription>See your changes in real-time</CardDescription>
 							</div>
 							<Card className="h-full w-full overflow-hidden">

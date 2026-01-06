@@ -42,6 +42,6 @@ export type AboutBlock = CvBlockBase<
 export type SkillsBlock = CvBlockBase<
 	"skills",
 	{
-		skills: string[];
+		skills: { id: string; name: string }[];
 	}
 >;

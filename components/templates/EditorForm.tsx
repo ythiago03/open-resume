@@ -68,6 +68,66 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 		});
 	};
 
+	const addSkill = (id: string) => {
+		const uuid = crypto.randomUUID();
+		changeResumeData({
+			...resumeData,
+			blocks: resumeData.blocks.map((block) =>
+				block.type === "skills" && block.id === id
+					? {
+							...block,
+							data: {
+								...block.data,
+								skills: [...block.data.skills, { id: uuid, name: "" }],
+							},
+						}
+					: block,
+			),
+		});
+	};
+
+	const changeSkill = (blockId: string, id: string, value: string) => {
+		changeResumeData({
+			...resumeData,
+			blocks: resumeData.blocks.map((block) =>
+				block.type === "skills" && block.id === blockId
+					? {
+							...block,
+							data: {
+								...block.data,
+								skills: block.data.skills.map((skill) => {
+									if (skill.id === id) {
+										return {
+											...skill,
+											name: value,
+										};
+									}
+									return skill;
+								}),
+							},
+						}
+					: block,
+			),
+		});
+	};
+
+	const deleteSkill = (id: string) => {
+		changeResumeData({
+			...resumeData,
+			blocks: resumeData.blocks.map((block) =>
+				block.type === "skills"
+					? {
+							...block,
+							data: {
+								...block.data,
+								skills: block.data.skills.filter((skill) => skill.id !== id),
+							},
+						}
+					: block,
+			),
+		});
+	};
+
 	const deleteLink = (id: string) => {
 		changeResumeData({
 			...resumeData,
@@ -142,6 +202,15 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 			...resumeData,
 			blocks: resumeData.blocks.map((block) =>
 				block.id === id ? { ...block, visible: !block.visible } : block,
+			),
+		});
+	};
+
+	const changeBlockTitle = (id: string, title: string) => {
+		changeResumeData({
+			...resumeData,
+			blocks: resumeData.blocks.map((block) =>
+				block.id === id ? { ...block, title } : block,
 			),
 		});
 	};
@@ -481,22 +550,26 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 															id="skillBlockTittle"
 															placeholder="Skills"
 															value={block.title}
-															// onChange={(e) =>
-															// 	changeAboutBlock(block.id, {
-															// 		title: e.target.value,
-															// 	})
-															// }
+															onChange={(e) =>
+																changeBlockTitle(block.id, e.target.value)
+															}
 															required
 														/>
 													</Field>
 
 													<div className="grid grid-cols-2 gap-4">
-														{block.data.skills.map((skill: string) => (
-															<div key={skill} className="flex gap-2">
-																<Input placeholder="Skill name" value={skill} />
+														{block.data.skills.map(({ id, name }) => (
+															<div key={id} className="flex gap-2">
+																<Input
+																	placeholder="Skill name"
+																	value={name}
+																	onChange={(e) =>
+																		changeSkill(block.id, id, e.target.value)
+																	}
+																/>
 																<Button
 																	type="button"
-																	// onClick={() => deleteBlock(block.id)}
+																	onClick={() => deleteSkill(id)}
 																	variant="ghost"
 																	className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
 																>
@@ -507,6 +580,8 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 													</div>
 
 													<Button
+														type="button"
+														onClick={() => addSkill(block.id)}
 														className="font-semibold cursor-pointer"
 														variant="outline"
 													>
