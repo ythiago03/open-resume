@@ -1,4 +1,8 @@
-import type { AboutBlock, ResumeData } from "@/app/types/ResumeData";
+import type {
+	AboutBlock,
+	ResumeData,
+	SkillsBlock,
+} from "@/app/types/ResumeData";
 import { MapPin, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -38,7 +42,43 @@ const EditorPreview = ({ resumeData }: EditorPreviewProps) => {
 		}));
 	};
 
-	const allBlocks = [...createAboutContents()];
+	const createSkillsContents = (): {
+		id: string;
+		order: number;
+		isVisible: boolean;
+		content: React.JSX.Element;
+	}[] => {
+		const skillBlocks = resumeData.blocks.filter(
+			(block): block is SkillsBlock => block.type === "skills",
+		);
+
+		return skillBlocks.map((block) => ({
+			id: block.id,
+			order: block.order,
+			isVisible: block.visible,
+			content: (
+				<Card key={block.id} className="text-start">
+					<CardTitle className="px-6 text-xl md:text-2xl mt-4">
+						{block.title}
+					</CardTitle>
+					<CardContent>
+						<div className="flex flex-wrap gap-2">
+							{block.data.skills.map(({ id, name }) => (
+								<span
+									key={id}
+									className="p-1 px-2 border border-border rounded-md"
+								>
+									{name}
+								</span>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			),
+		}));
+	};
+
+	const allBlocks = [...createAboutContents(), ...createSkillsContents()];
 	const ordenedBlocks = allBlocks.sort((a, b) => a.order - b.order);
 
 	return (
