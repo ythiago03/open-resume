@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "../ui/button";
-import { Card } from "../ui/card";
+import { Card, CardHeader } from "../ui/card";
 import {
 	Field,
 	FieldDescription,
@@ -367,7 +367,10 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 						</div>
 
 						{resumeData.socialLinks.map(({ id, platform, url }) => (
-							<Card key={id} className="grid grid-cols-[1fr_auto] gap-4 px-4">
+							<Card
+								key={id}
+								className="grid grid-cols-[1fr_auto] gap-4 px-4 shadow-none"
+							>
 								<FieldGroup className="gap-2">
 									<Input
 										id="platformName"
@@ -592,6 +595,83 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 										</div>
 									),
 							)}
+
+							<div className="border-b">
+								<AccordionItem value="projects">
+									<div className="flex items-center gap-2">
+										<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
+											Feature Projects
+											{/* {!block.visible && (
+															<EyeOff className="size-4 text-muted-foreground" />
+														)} */}
+										</AccordionTrigger>
+										<Button
+											type="button"
+											// onClick={() => toggleBlockView(block.id)}
+											variant="ghost"
+											className="cursor-pointer"
+										>
+											{/* {block.visible ? <Eye /> : <EyeOff />} */}
+											<Eye />
+										</Button>
+										<Button
+											type="button"
+											// onClick={() => deleteBlock(block.id)}
+											variant="ghost"
+											className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+										>
+											<Trash2 />
+										</Button>
+									</div>
+
+									<AccordionContent className="flex flex-col gap-4 mt-4">
+										<Field>
+											<FieldLabel
+												className="font-semibold"
+												htmlFor="projectBlockTitle"
+											>
+												Block Title
+											</FieldLabel>
+											<Input id="projectBlockTitle" placeholder="Projects" />
+										</Field>
+
+										<Card className="px-4 shadow-none gap-3">
+											<CardHeader className="flex justify-between items-center px-0">
+												<h4 className="font-semibold text-md">Project</h4>
+
+												<Button
+													type="button"
+													variant="ghost"
+													className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+												>
+													<Trash2 />
+												</Button>
+											</CardHeader>
+
+											<Input id="projectTitle" placeholder="Project Title" />
+											<Textarea
+												id="projectDescription"
+												placeholder="Description"
+												className="resize-vertical"
+												rows={3}
+											/>
+											<Input id="projectURL" placeholder="URL (optional)" />
+											<Input
+												id="projectTags"
+												placeholder="Tags (comma separated)"
+											/>
+										</Card>
+
+										<Button
+											type="button"
+											className="font-semibold cursor-pointer"
+											variant="outline"
+										>
+											<Plus /> Add Project
+										</Button>
+									</AccordionContent>
+								</AccordionItem>
+							</div>
 						</Accordion>
 					</FieldGroup>
 				</FieldSet>

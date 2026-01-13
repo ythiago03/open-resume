@@ -10,7 +10,7 @@ export interface ResumeData {
 	blocks: CvBlock[];
 }
 
-export type CvBlock = AboutBlock | SkillsBlock;
+export type CvBlock = AboutBlock | SkillsBlock | ProjectsBlock;
 
 export interface CvSocialLink {
 	id: string;
@@ -43,5 +43,18 @@ export type SkillsBlock = CvBlockBase<
 	"skills",
 	{
 		skills: { id: string; name: string }[];
+	}
+>;
+
+export type ProjectsBlock = CvBlockBase<
+	"projects",
+	{
+		projects: {
+			id: string;
+			name: string;
+			url?: string;
+			description: string;
+			tags: string[];
+		}[];
 	}
 >;

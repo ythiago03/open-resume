@@ -108,7 +108,7 @@ const EditorPreview = ({ resumeData }: EditorPreviewProps) => {
 					))}
 				</div>
 
-				<div className="space-y-4 mt-6">
+				<div className="space-y-4 mt-6 w-full">
 					{ordenedBlocks
 						.filter(({ isVisible }) => isVisible)
 						.map(({ id, content }) => (
