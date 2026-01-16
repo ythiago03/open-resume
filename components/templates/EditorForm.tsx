@@ -135,7 +135,7 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 		});
 	};
 
-	const addBlock = (type: "about" | "skills") => {
+	const addBlock = (type: "about" | "skills" | "projects") => {
 		const uuid = crypto.randomUUID();
 		const newBlocks = [];
 
@@ -165,6 +165,19 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 			};
 			newBlocks.push(newBlock);
 		}
+		if (type === "projects") {
+			const newBlock = {
+				id: uuid,
+				type: type,
+				title: "Feature Projects",
+				order: 0,
+				visible: true,
+				data: {
+					projects: [],
+				},
+			};
+			newBlocks.push(newBlock);
+		}
 
 		changeResumeData({
 			...resumeData,
@@ -190,6 +203,27 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 		});
 	};
 
+	const addProject = (blockId: string) => {
+		const uuid = crypto.randomUUID();
+		changeResumeData({
+			...resumeData,
+			blocks: resumeData.blocks.map((block) =>
+				block.type === "projects" && block.id === blockId
+					? {
+							...block,
+							data: {
+								...block.data,
+								projects: [
+									...block.data.projects,
+									{ id: uuid, name: "Project", description: "", tags: [] },
+								],
+							},
+						}
+					: block,
+			),
+		});
+	};
+
 	const deleteBlock = (id: string) => {
 		changeResumeData({
 			...resumeData,
@@ -207,6 +241,7 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 	};
 
 	const changeBlockTitle = (id: string, title: string) => {
+		console.log("alterando o title", id, title);
 		changeResumeData({
 			...resumeData,
 			blocks: resumeData.blocks.map((block) =>
@@ -596,82 +631,111 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 									),
 							)}
 
-							<div className="border-b">
-								<AccordionItem value="projects">
-									<div className="flex items-center gap-2">
-										<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
-											Feature Projects
-											{/* {!block.visible && (
+							{resumeData.blocks.map(
+								(block) =>
+									block.type === "projects" && (
+										<div key={block.id} className="border-b">
+											<AccordionItem value="projects">
+												<div className="flex items-center gap-2">
+													<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
+														Feature Projects
+														{!block.visible && (
 															<EyeOff className="size-4 text-muted-foreground" />
-														)} */}
-										</AccordionTrigger>
-										<Button
-											type="button"
-											// onClick={() => toggleBlockView(block.id)}
-											variant="ghost"
-											className="cursor-pointer"
-										>
-											{/* {block.visible ? <Eye /> : <EyeOff />} */}
-											<Eye />
-										</Button>
-										<Button
-											type="button"
-											// onClick={() => deleteBlock(block.id)}
-											variant="ghost"
-											className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-										>
-											<Trash2 />
-										</Button>
-									</div>
+														)}
+													</AccordionTrigger>
+													<Button
+														type="button"
+														onClick={() => toggleBlockView(block.id)}
+														variant="ghost"
+														className="cursor-pointer"
+													>
+														{block.visible ? <Eye /> : <EyeOff />}
+													</Button>
+													<Button
+														type="button"
+														onClick={() => deleteBlock(block.id)}
+														variant="ghost"
+														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+													>
+														<Trash2 />
+													</Button>
+												</div>
 
-									<AccordionContent className="flex flex-col gap-4 mt-4">
-										<Field>
-											<FieldLabel
-												className="font-semibold"
-												htmlFor="projectBlockTitle"
-											>
-												Block Title
-											</FieldLabel>
-											<Input id="projectBlockTitle" placeholder="Projects" />
-										</Field>
+												<AccordionContent className="flex flex-col gap-4 mt-4">
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="projectBlockTitle"
+														>
+															{block.title}
+														</FieldLabel>
+														<Input
+															id="projectBlockTitle"
+															placeholder="Feature Projects"
+															value={block.title}
+															onChange={(e) =>
+																changeBlockTitle(block.id, e.target.value)
+															}
+														/>
+													</Field>
 
-										<Card className="px-4 shadow-none gap-3">
-											<CardHeader className="flex justify-between items-center px-0">
-												<h4 className="font-semibold text-md">Project</h4>
+													{block.data.projects.map((project) => (
+														<Card
+															key={project.id}
+															className="px-4 shadow-none gap-3"
+														>
+															<CardHeader className="flex justify-between items-center px-0">
+																<h4 className="font-semibold text-md">
+																	{project.name}
+																</h4>
 
-												<Button
-													type="button"
-													variant="ghost"
-													className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-												>
-													<Trash2 />
-												</Button>
-											</CardHeader>
+																<Button
+																	type="button"
+																	variant="ghost"
+																	className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+																>
+																	<Trash2 />
+																</Button>
+															</CardHeader>
 
-											<Input id="projectTitle" placeholder="Project Title" />
-											<Textarea
-												id="projectDescription"
-												placeholder="Description"
-												className="resize-vertical"
-												rows={3}
-											/>
-											<Input id="projectURL" placeholder="URL (optional)" />
-											<Input
-												id="projectTags"
-												placeholder="Tags (comma separated)"
-											/>
-										</Card>
+															<Input
+																id="projectTitle"
+																placeholder="Project Title"
+																value={project.name}
+															/>
+															<Textarea
+																id="projectDescription"
+																placeholder="Description"
+																className="resize-vertical"
+																rows={3}
+																value={project.description}
+															/>
+															<Input
+																id="projectURL"
+																placeholder="URL (optional)"
+																value={project.url}
+															/>
+															<Input
+																id="projectTags"
+																placeholder="Tags (comma separated)"
+																value={project.tags.join(", ")}
+															/>
+														</Card>
+													))}
 
-										<Button
-											type="button"
-											className="font-semibold cursor-pointer"
-											variant="outline"
-										>
-											<Plus /> Add Project
-										</Button>
-									</AccordionContent>
-								</AccordionItem>
-							</div>
+													<Button
+														type="button"
+														className="font-semibold cursor-pointer"
+														variant="outline"
+														onClick={() => addProject(block.id)}
+													>
+														<Plus /> Add Project
+													</Button>
+												</AccordionContent>
+											</AccordionItem>
+										</div>
+									),
+							)}
 						</Accordion>
 					</FieldGroup>
 				</FieldSet>
