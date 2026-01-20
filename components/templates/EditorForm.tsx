@@ -27,6 +27,7 @@ import type {
 	AboutBlock,
 	CvBlockTypes,
 	CvSocialLink,
+	ProjectsBlock,
 	ResumeData,
 } from "@/app/types/ResumeData";
 import { useState } from "react";
@@ -36,6 +37,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "../ui/accordion";
+import { resume } from "react-dom/server";
 
 interface EditorFormProps {
 	resumeData: ResumeData;
@@ -246,6 +248,55 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 			...resumeData,
 			blocks: resumeData.blocks.map((block) =>
 				block.id === id ? { ...block, title } : block,
+			),
+		});
+	};
+
+	const deleteProject = (projectId: string, blockId: string) => {
+		changeResumeData({
+			...resumeData,
+			blocks: resumeData.blocks.map((block) =>
+				block.type === "projects" && block.id === blockId
+					? {
+							...block,
+							data: {
+								...block.data,
+								projects: block.data.projects.filter(
+									(project) => project.id !== projectId,
+								),
+							},
+						}
+					: block,
+			),
+		});
+	};
+
+	const updateProject = (
+		projectId: string,
+		blockId: string,
+		newProject: {
+			name?: string;
+			url?: string;
+			description?: string;
+			tags?: string[];
+		},
+	) => {
+		changeResumeData({
+			...resumeData,
+			blocks: resumeData.blocks.map((block) =>
+				block.type === "projects" && block.id === blockId
+					? {
+							...block,
+							data: {
+								...block.data,
+								projects: block.data.projects.map((project) =>
+									project.id === projectId
+										? Object.assign({}, project, newProject)
+										: project,
+								),
+							},
+						}
+					: block,
 			),
 		});
 	};
@@ -693,6 +744,9 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 																	type="button"
 																	variant="ghost"
 																	className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+																	onClick={() =>
+																		deleteProject(project.id, block.id)
+																	}
 																>
 																	<Trash2 />
 																</Button>
@@ -702,6 +756,11 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 																id="projectTitle"
 																placeholder="Project Title"
 																value={project.name}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		name: e.target.value,
+																	})
+																}
 															/>
 															<Textarea
 																id="projectDescription"
