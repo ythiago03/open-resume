@@ -1,5 +1,11 @@
 "use client";
 
+import { useState } from "react";
+
+import useCVEditor from "@/hooks/useCVEditor";
+
+import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
+
 import { Button } from "../ui/button";
 import { Card, CardHeader } from "../ui/card";
 import {
@@ -20,285 +26,37 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-
-import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
-
-import type {
-	AboutBlock,
-	CvBlockTypes,
-	CvSocialLink,
-	ProjectsBlock,
-	ResumeData,
-} from "@/app/types/ResumeData";
-import { useState } from "react";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from "../ui/accordion";
-import { resume } from "react-dom/server";
 
-interface EditorFormProps {
-	resumeData: ResumeData;
-	changeResumeData: (data: ResumeData) => void;
-}
-
-const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
+const EditorForm = () => {
 	const [selectedBlock, setSelectedBlock] = useState<string>("about");
+	const {
+		addLink,
+		updateLink,
+		deleteLink,
+		addBlock,
+		resumeData,
+		deleteBlock,
+		changeBlockTitle,
+		toggleBlockView,
+		updateAboutDescription,
+		addSkill,
+		updateSkillName,
+		deleteSkill,
+		addProject,
+		updateProject,
+		deleteProject,
+		setResumeData: changeResumeData,
+	} = useCVEditor();
 
-	const updateLink = (link: CvSocialLink) => {
-		changeResumeData({
-			...resumeData,
-			socialLinks: resumeData.socialLinks.map((oldLink) =>
-				oldLink.id === link.id ? link : oldLink,
-			),
-		});
-	};
-
-	const addLink = () => {
-		const uuid = crypto.randomUUID();
-		const newLink = {
-			id: uuid,
-			platform: "",
-			url: "",
-			icon: "",
-		};
-		changeResumeData({
-			...resumeData,
-			socialLinks: [...resumeData.socialLinks, newLink],
-		});
-	};
-
-	const addSkill = (id: string) => {
-		const uuid = crypto.randomUUID();
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.type === "skills" && block.id === id
-					? {
-							...block,
-							data: {
-								...block.data,
-								skills: [...block.data.skills, { id: uuid, name: "" }],
-							},
-						}
-					: block,
-			),
-		});
-	};
-
-	const changeSkill = (blockId: string, id: string, value: string) => {
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.type === "skills" && block.id === blockId
-					? {
-							...block,
-							data: {
-								...block.data,
-								skills: block.data.skills.map((skill) => {
-									if (skill.id === id) {
-										return {
-											...skill,
-											name: value,
-										};
-									}
-									return skill;
-								}),
-							},
-						}
-					: block,
-			),
-		});
-	};
-
-	const deleteSkill = (id: string) => {
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.type === "skills"
-					? {
-							...block,
-							data: {
-								...block.data,
-								skills: block.data.skills.filter((skill) => skill.id !== id),
-							},
-						}
-					: block,
-			),
-		});
-	};
-
-	const deleteLink = (id: string) => {
-		changeResumeData({
-			...resumeData,
-			socialLinks: resumeData.socialLinks.filter((link) => link.id !== id),
-		});
-	};
-
-	const addBlock = (type: "about" | "skills" | "projects") => {
-		const uuid = crypto.randomUUID();
-		const newBlocks = [];
-
-		if (type === "about") {
-			const newBlock: AboutBlock = {
-				id: uuid,
-				type: type,
-				title: "About",
-				order: 0,
-				visible: true,
-				data: {
-					description: "",
-				},
-			};
-			newBlocks.push(newBlock);
-		}
-		if (type === "skills") {
-			const newBlock = {
-				id: uuid,
-				type: type,
-				title: "Skills",
-				order: 0,
-				visible: true,
-				data: {
-					skills: [],
-				},
-			};
-			newBlocks.push(newBlock);
-		}
-		if (type === "projects") {
-			const newBlock = {
-				id: uuid,
-				type: type,
-				title: "Feature Projects",
-				order: 0,
-				visible: true,
-				data: {
-					projects: [],
-				},
-			};
-			newBlocks.push(newBlock);
-		}
-
-		changeResumeData({
-			...resumeData,
-			blocks: [...resumeData.blocks, ...newBlocks],
-		});
-	};
-
-	const changeAboutBlock = (
-		id: string,
-		content: { title?: string; content?: string },
-	) => {
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.type === "about" && block.id === id
-					? {
-							...block,
-							title: content.title ?? block.title,
-							data: { description: content.content ?? block.data.description },
-						}
-					: block,
-			),
-		});
-	};
-
-	const addProject = (blockId: string) => {
-		const uuid = crypto.randomUUID();
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.type === "projects" && block.id === blockId
-					? {
-							...block,
-							data: {
-								...block.data,
-								projects: [
-									...block.data.projects,
-									{ id: uuid, name: "Project", description: "", tags: [] },
-								],
-							},
-						}
-					: block,
-			),
-		});
-	};
-
-	const deleteBlock = (id: string) => {
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.filter((block) => block.id !== id),
-		});
-	};
-
-	const toggleBlockView = (id: string) => {
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.id === id ? { ...block, visible: !block.visible } : block,
-			),
-		});
-	};
-
-	const changeBlockTitle = (id: string, title: string) => {
-		console.log("alterando o title", id, title);
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.id === id ? { ...block, title } : block,
-			),
-		});
-	};
-
-	const deleteProject = (projectId: string, blockId: string) => {
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.type === "projects" && block.id === blockId
-					? {
-							...block,
-							data: {
-								...block.data,
-								projects: block.data.projects.filter(
-									(project) => project.id !== projectId,
-								),
-							},
-						}
-					: block,
-			),
-		});
-	};
-
-	const updateProject = (
-		projectId: string,
-		blockId: string,
-		newProject: {
-			name?: string;
-			url?: string;
-			description?: string;
-			tags?: string[];
-		},
-	) => {
-		changeResumeData({
-			...resumeData,
-			blocks: resumeData.blocks.map((block) =>
-				block.type === "projects" && block.id === blockId
-					? {
-							...block,
-							data: {
-								...block.data,
-								projects: block.data.projects.map((project) =>
-									project.id === projectId
-										? Object.assign({}, project, newProject)
-										: project,
-								),
-							},
-						}
-					: block,
-			),
-		});
+	const convertTags = (tags: string) => {
+		const tagsArray = tags.split(",");
+		return tagsArray.map((tag) => tag.trim());
 	};
 
 	return (
@@ -563,9 +321,7 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 															placeholder="About"
 															value={block.title}
 															onChange={(e) =>
-																changeAboutBlock(block.id, {
-																	title: e.target.value,
-																})
+																changeBlockTitle(block.id, e.target.value)
 															}
 															required
 														/>
@@ -584,9 +340,7 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 															className="resize-vertical"
 															value={block.data.description}
 															onChange={(e) =>
-																changeAboutBlock(block.id, {
-																	content: e.target.value,
-																})
+																updateAboutDescription(block.id, e.target.value)
 															}
 															rows={4}
 														/>
@@ -653,7 +407,11 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 																	placeholder="Skill name"
 																	value={name}
 																	onChange={(e) =>
-																		changeSkill(block.id, id, e.target.value)
+																		updateSkillName(
+																			block.id,
+																			id,
+																			e.target.value,
+																		)
 																	}
 																/>
 																<Button
@@ -768,16 +526,31 @@ const EditorForm = ({ resumeData, changeResumeData }: EditorFormProps) => {
 																className="resize-vertical"
 																rows={3}
 																value={project.description}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		description: e.target.value,
+																	})
+																}
 															/>
 															<Input
 																id="projectURL"
 																placeholder="URL (optional)"
 																value={project.url}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		url: e.target.value,
+																	})
+																}
 															/>
 															<Input
 																id="projectTags"
 																placeholder="Tags (comma separated)"
 																value={project.tags.join(", ")}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		tags: convertTags(e.target.value),
+																	})
+																}
 															/>
 														</Card>
 													))}

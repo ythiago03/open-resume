@@ -1,18 +1,22 @@
+import Link from "next/link";
+
+import useCVEditor from "@/hooks/useCVEditor";
+
 import type {
 	AboutBlock,
-	ResumeData,
+	ProjectsBlock,
 	SkillsBlock,
-} from "@/app/types/ResumeData";
+} from "@/types/ResumeData";
+
 import { MapPin, SquareArrowOutUpRight } from "lucide-react";
-import Link from "next/link";
+
 import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
 
-interface EditorPreviewProps {
-	resumeData: ResumeData;
-}
+const EditorPreview = () => {
+	const { resumeData } = useCVEditor();
 
-const EditorPreview = ({ resumeData }: EditorPreviewProps) => {
 	const createAboutContents = (): {
 		id: string;
 		order: number;
@@ -78,11 +82,64 @@ const EditorPreview = ({ resumeData }: EditorPreviewProps) => {
 		}));
 	};
 
-	const allBlocks = [...createAboutContents(), ...createSkillsContents()];
+	const createProjectsContents = (): {
+		id: string;
+		order: number;
+		isVisible: boolean;
+		content: React.JSX.Element;
+	}[] => {
+		const projectsBlocks = resumeData.blocks.filter(
+			(block): block is ProjectsBlock => block.type === "projects",
+		);
+
+		return projectsBlocks.map((block) => ({
+			id: block.id,
+			order: block.order,
+			isVisible: block.visible,
+			content: (
+				<Card key={block.id} className="text-start">
+					<CardTitle className="px-6 text-xl md:text-2xl mt-4">
+						{block.title}
+					</CardTitle>
+					<CardContent className="space-y-4">
+						{block.data.projects.map(({ id, name, description, url, tags }) => (
+							<div
+								key={id}
+								className="p-6 border rounded-lg border-border shadow-sm"
+							>
+								<div className="flex justify-between">
+									<h4 className="font-semibold text-lg">{name}</h4>
+									{url && (
+										<Link href={url}>
+											<SquareArrowOutUpRight className="text-muted-foreground size-4" />
+										</Link>
+									)}
+								</div>
+								<p className="my-2 text-muted-foreground">{description}</p>
+								<div className="flex flex-wrap gap-2">
+									{tags.map((tag) => (
+										<Badge key={`tag-${tag}-${id}`} variant="secondary">
+											{tag}
+										</Badge>
+									))}
+								</div>
+							</div>
+						))}
+					</CardContent>
+				</Card>
+			),
+		}));
+	};
+
+	const allBlocks = [
+		...createAboutContents(),
+		...createSkillsContents(),
+		...createProjectsContents(),
+	];
 	const ordenedBlocks = allBlocks.sort((a, b) => a.order - b.order);
 
 	return (
-		<section className="flex flex-col items-center text-center p-6">
+		<section className="flex flex-col items-center text-center p-6 overflow-auto">
 			<div className="flex flex-col items-center text-center">
 				<h2 className="text-2xl md:text-4xl font-bold">
 					{resumeData.personalInfo.fullName}
