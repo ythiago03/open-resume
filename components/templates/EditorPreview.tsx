@@ -110,7 +110,7 @@ const EditorPreview = () => {
 								<div className="flex justify-between">
 									<h4 className="font-semibold text-lg">{name}</h4>
 									{url && (
-										<Link href={url}>
+										<Link href={url} target="_blank">
 											<SquareArrowOutUpRight className="text-muted-foreground size-4" />
 										</Link>
 									)}
