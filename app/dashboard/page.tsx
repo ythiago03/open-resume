@@ -73,8 +73,10 @@ const page = () => {
 						</p>
 					</div>
 
-					<Button size="lg" className="font-semibold">
-						<Plus className="size-5" /> New CV
+					<Button size="lg" className="font-semibold" asChild>
+						<Link href="/cv">
+							<Plus className="size-5" /> New CV
+						</Link>
 					</Button>
 				</div>
 

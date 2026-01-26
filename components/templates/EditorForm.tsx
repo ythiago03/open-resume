@@ -1,0 +1,579 @@
+"use client";
+
+import { useState } from "react";
+
+import useCVEditor from "@/hooks/useCVEditor";
+
+import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
+
+import { Button } from "../ui/button";
+import { Card, CardHeader } from "../ui/card";
+import {
+	Field,
+	FieldDescription,
+	FieldGroup,
+	FieldLabel,
+	FieldLegend,
+	FieldSeparator,
+	FieldSet,
+} from "../ui/field";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "../ui/accordion";
+
+const EditorForm = () => {
+	const [selectedBlock, setSelectedBlock] = useState<string>("about");
+	const {
+		addLink,
+		updateLink,
+		deleteLink,
+		addBlock,
+		resumeData,
+		deleteBlock,
+		changeBlockTitle,
+		toggleBlockView,
+		updateAboutDescription,
+		addSkill,
+		updateSkillName,
+		deleteSkill,
+		addProject,
+		updateProject,
+		deleteProject,
+		setResumeData: changeResumeData,
+	} = useCVEditor();
+
+	const convertTags = (tags: string) => {
+		const tagsArray = tags.split(",");
+		return tagsArray.map((tag) => tag.trim());
+	};
+
+	return (
+		<form className="overflow-y-auto">
+			<FieldGroup className="px-6">
+				<FieldSet>
+					<FieldGroup className="gap-2">
+						<FieldLegend className="font-semibold text-xl!">
+							Template Design
+						</FieldLegend>
+						<Field className="w-fit">
+							<FieldLabel htmlFor="template" className="font-semibold">
+								Choose Template
+							</FieldLabel>
+							<Select defaultValue="">
+								<SelectTrigger id="template">
+									<SelectValue placeholder="Centered - Clean card-based layout" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="centered">
+										Centered - Clean card-based layout
+									</SelectItem>
+									<SelectItem value="vibrant">
+										Vibrant - Colorful gradient design
+									</SelectItem>
+									<SelectItem value="elegant">
+										Elegant - Sophisticated typography
+									</SelectItem>
+								</SelectContent>
+							</Select>
+							<FieldDescription>
+								Preview updates instantly on the right panel
+							</FieldDescription>
+						</Field>
+					</FieldGroup>
+				</FieldSet>
+
+				<FieldSeparator />
+
+				<FieldSet>
+					<FieldGroup className="gap-2">
+						<FieldLegend className="font-semibold text-xl!">
+							Personal Info
+						</FieldLegend>
+						<Field>
+							<FieldLabel className="font-semibold" htmlFor="fullName">
+								Full Name
+							</FieldLabel>
+							<Input
+								id="fullName"
+								placeholder="John Doe"
+								required
+								value={resumeData.personalInfo.fullName}
+								onChange={(e) =>
+									changeResumeData({
+										...resumeData,
+										personalInfo: {
+											...resumeData.personalInfo,
+											fullName: e.target.value,
+										},
+									})
+								}
+							/>
+						</Field>
+						<Field>
+							<FieldLabel className="font-semibold" htmlFor="tagline">
+								Tagline
+							</FieldLabel>
+							<Input
+								id="tagline"
+								placeholder="Product Designer & Developer"
+								required
+								value={resumeData.personalInfo.tagline}
+								onChange={(e) =>
+									changeResumeData({
+										...resumeData,
+										personalInfo: {
+											...resumeData.personalInfo,
+											tagline: e.target.value,
+										},
+									})
+								}
+							/>
+						</Field>
+						<Field>
+							<FieldLabel className="font-semibold" htmlFor="bio">
+								Bio
+							</FieldLabel>
+							<Textarea
+								id="bio"
+								placeholder="A short bio about yourself..."
+								className="resize-vertical"
+								rows={4}
+								value={resumeData.personalInfo.bio}
+								onChange={(e) =>
+									changeResumeData({
+										...resumeData,
+										personalInfo: {
+											...resumeData.personalInfo,
+											bio: e.target.value,
+										},
+									})
+								}
+							/>
+						</Field>
+						<Field>
+							<FieldLabel className="font-semibold" htmlFor="location">
+								Location
+							</FieldLabel>
+							<Input
+								id="location"
+								placeholder="San Francisco, CA"
+								required
+								value={resumeData.personalInfo.location}
+								onChange={(e) =>
+									changeResumeData({
+										...resumeData,
+										personalInfo: {
+											...resumeData.personalInfo,
+											location: e.target.value,
+										},
+									})
+								}
+							/>
+						</Field>
+						<Field>
+							<FieldLabel className="font-semibold" htmlFor="profilePicture">
+								Profile Image
+							</FieldLabel>
+							<Input id="profilePicture" type="file" />
+						</Field>
+					</FieldGroup>
+				</FieldSet>
+
+				<FieldSeparator />
+
+				<FieldSet>
+					<FieldGroup className="gap-2">
+						<div className="flex justify-between items-center">
+							<FieldLegend className="font-semibold text-xl!">
+								Social Links
+							</FieldLegend>
+
+							<Button
+								type="button"
+								onClick={addLink}
+								variant="outline"
+								className="cursor-pointer"
+							>
+								<Plus /> Add Link
+							</Button>
+						</div>
+
+						{resumeData.socialLinks.map(({ id, platform, url }) => (
+							<Card
+								key={id}
+								className="grid grid-cols-[1fr_auto] gap-4 px-4 shadow-none"
+							>
+								<FieldGroup className="gap-2">
+									<Input
+										id="platformName"
+										placeholder="Platform (e.g., LinkedIn)"
+										value={platform}
+										onChange={(e) =>
+											updateLink({ id, url, platform: e.target.value })
+										}
+									/>
+									<Input
+										id="platformLink"
+										placeholder="URL"
+										value={url}
+										onChange={(e) =>
+											updateLink({ id, platform, url: e.target.value })
+										}
+									/>
+								</FieldGroup>
+								<Button
+									onClick={() => deleteLink(id)}
+									variant="ghost"
+									className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+								>
+									<Trash2 />
+								</Button>
+							</Card>
+						))}
+					</FieldGroup>
+				</FieldSet>
+
+				<FieldSeparator />
+
+				<FieldSet>
+					<FieldGroup className="gap-2">
+						<FieldLegend className="font-semibold text-xl!">
+							Content Blocks
+						</FieldLegend>
+						<Field className="grid grid-cols-[1fr_auto]">
+							<Select
+								defaultValue="about"
+								onValueChange={(value: string) => setSelectedBlock(value)}
+							>
+								<SelectTrigger id="template">
+									<SelectValue placeholder="About" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="about">About</SelectItem>
+									<SelectItem value="links">Links</SelectItem>
+									<SelectItem value="projects">Projects</SelectItem>
+									<SelectItem value="skills">Skills</SelectItem>
+									<SelectItem value="expirience">Expirience</SelectItem>
+									<SelectItem value="education">Education</SelectItem>
+								</SelectContent>
+							</Select>
+							<Button
+								type="button"
+								onClick={() => addBlock(selectedBlock as "about" | "skills")}
+								className="cursor-pointer"
+							>
+								<Plus /> Add Block
+							</Button>
+						</Field>
+
+						<Accordion type="single" collapsible className="w-full px-2">
+							{resumeData.blocks.map(
+								(block) =>
+									block.type === "about" && (
+										<div key={block.id} className="border-b">
+											<AccordionItem value={block.id} className="border-b">
+												<div className="flex items-center gap-2">
+													<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
+														{block.title}
+														{!block.visible && (
+															<EyeOff className="size-4 text-muted-foreground" />
+														)}
+													</AccordionTrigger>
+													<Button
+														type="button"
+														onClick={() => toggleBlockView(block.id)}
+														variant="ghost"
+														className="cursor-pointer"
+													>
+														{block.visible ? <Eye /> : <EyeOff />}
+													</Button>
+													<Button
+														type="button"
+														onClick={() => deleteBlock(block.id)}
+														variant="ghost"
+														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+													>
+														<Trash2 />
+													</Button>
+												</div>
+												<AccordionContent className="flex flex-col gap-4 mt-4">
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="aboutTitle"
+														>
+															Block Title
+														</FieldLabel>
+														<Input
+															id="aboutTitle"
+															placeholder="About"
+															value={block.title}
+															onChange={(e) =>
+																changeBlockTitle(block.id, e.target.value)
+															}
+															required
+														/>
+													</Field>
+
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="aboutContent"
+														>
+															About Content
+														</FieldLabel>
+														<Textarea
+															id="aboutContent"
+															placeholder="Tell your story..."
+															className="resize-vertical"
+															value={block.data.description}
+															onChange={(e) =>
+																updateAboutDescription(block.id, e.target.value)
+															}
+															rows={4}
+														/>
+													</Field>
+												</AccordionContent>
+											</AccordionItem>
+										</div>
+									),
+							)}
+
+							{resumeData.blocks.map(
+								(block) =>
+									block.type === "skills" && (
+										<div key={block.id} className="border-b">
+											<AccordionItem value="skills">
+												<div className="flex items-center gap-2">
+													<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
+														{block.title}
+														{!block.visible && (
+															<EyeOff className="size-4 text-muted-foreground" />
+														)}
+													</AccordionTrigger>
+													<Button
+														type="button"
+														onClick={() => toggleBlockView(block.id)}
+														variant="ghost"
+														className="cursor-pointer"
+													>
+														{block.visible ? <Eye /> : <EyeOff />}
+													</Button>
+													<Button
+														type="button"
+														onClick={() => deleteBlock(block.id)}
+														variant="ghost"
+														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+													>
+														<Trash2 />
+													</Button>
+												</div>
+
+												<AccordionContent className="flex flex-col gap-4 mt-4">
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="skillBlockTittle"
+														>
+															Block Title
+														</FieldLabel>
+														<Input
+															id="skillBlockTittle"
+															placeholder="Skills"
+															value={block.title}
+															onChange={(e) =>
+																changeBlockTitle(block.id, e.target.value)
+															}
+															required
+														/>
+													</Field>
+
+													<div className="grid grid-cols-2 gap-4">
+														{block.data.skills.map(({ id, name }) => (
+															<div key={id} className="flex gap-2">
+																<Input
+																	placeholder="Skill name"
+																	value={name}
+																	onChange={(e) =>
+																		updateSkillName(
+																			block.id,
+																			id,
+																			e.target.value,
+																		)
+																	}
+																/>
+																<Button
+																	type="button"
+																	onClick={() => deleteSkill(id)}
+																	variant="ghost"
+																	className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+																>
+																	<Trash2 />
+																</Button>
+															</div>
+														))}
+													</div>
+
+													<Button
+														type="button"
+														onClick={() => addSkill(block.id)}
+														className="font-semibold cursor-pointer"
+														variant="outline"
+													>
+														<Plus /> Add Skill
+													</Button>
+												</AccordionContent>
+											</AccordionItem>
+										</div>
+									),
+							)}
+
+							{resumeData.blocks.map(
+								(block) =>
+									block.type === "projects" && (
+										<div key={block.id} className="border-b">
+											<AccordionItem value="projects">
+												<div className="flex items-center gap-2">
+													<AccordionTrigger className="flex items-center cursor-pointer font-semibold">
+														Feature Projects
+														{!block.visible && (
+															<EyeOff className="size-4 text-muted-foreground" />
+														)}
+													</AccordionTrigger>
+													<Button
+														type="button"
+														onClick={() => toggleBlockView(block.id)}
+														variant="ghost"
+														className="cursor-pointer"
+													>
+														{block.visible ? <Eye /> : <EyeOff />}
+													</Button>
+													<Button
+														type="button"
+														onClick={() => deleteBlock(block.id)}
+														variant="ghost"
+														className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+													>
+														<Trash2 />
+													</Button>
+												</div>
+
+												<AccordionContent className="flex flex-col gap-4 mt-4">
+													<Field>
+														<FieldLabel
+															className="font-semibold"
+															htmlFor="projectBlockTitle"
+														>
+															{block.title}
+														</FieldLabel>
+														<Input
+															id="projectBlockTitle"
+															placeholder="Feature Projects"
+															value={block.title}
+															onChange={(e) =>
+																changeBlockTitle(block.id, e.target.value)
+															}
+														/>
+													</Field>
+
+													{block.data.projects.map((project) => (
+														<Card
+															key={project.id}
+															className="px-4 shadow-none gap-3"
+														>
+															<CardHeader className="flex justify-between items-center px-0">
+																<h4 className="font-semibold text-md">
+																	{project.name}
+																</h4>
+
+																<Button
+																	type="button"
+																	variant="ghost"
+																	className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+																	onClick={() =>
+																		deleteProject(project.id, block.id)
+																	}
+																>
+																	<Trash2 />
+																</Button>
+															</CardHeader>
+
+															<Input
+																id="projectTitle"
+																placeholder="Project Title"
+																value={project.name}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		name: e.target.value,
+																	})
+																}
+															/>
+															<Textarea
+																id="projectDescription"
+																placeholder="Description"
+																className="resize-vertical"
+																rows={3}
+																value={project.description}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		description: e.target.value,
+																	})
+																}
+															/>
+															<Input
+																id="projectURL"
+																placeholder="URL (optional)"
+																value={project.url}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		url: e.target.value,
+																	})
+																}
+															/>
+															<Input
+																id="projectTags"
+																placeholder="Tags (comma separated)"
+																value={project.tags.join(", ")}
+																onChange={(e) =>
+																	updateProject(project.id, block.id, {
+																		tags: convertTags(e.target.value),
+																	})
+																}
+															/>
+														</Card>
+													))}
+
+													<Button
+														type="button"
+														className="font-semibold cursor-pointer"
+														variant="outline"
+														onClick={() => addProject(block.id)}
+													>
+														<Plus /> Add Project
+													</Button>
+												</AccordionContent>
+											</AccordionItem>
+										</div>
+									),
+							)}
+						</Accordion>
+					</FieldGroup>
+				</FieldSet>
+			</FieldGroup>
+		</form>
+	);
+};
+
+export default EditorForm;
