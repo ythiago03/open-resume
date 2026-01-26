@@ -1,20 +1,29 @@
 import { createContext, useState } from "react";
-import { ResumeData } from "@/types/ResumeData";
+import { ResumeData, SimpleResume } from "@/types/ResumeData";
 
 interface ResumeContext {
 	resumeData: ResumeData | null;
 	setResumeData: (data: ResumeData) => void;
+	simpleResumes: SimpleResume[];
+	setSimpleResumes: (data: SimpleResume[]) => void;
+	fullResumes: ResumeData[];
+	setFullResumes: (data: ResumeData[]) => void;
 }
 
 const initialContext = {
 	resumeData: null,
 	setResumeData: () => {},
+	simpleResumes: [],
+	setSimpleResumes: () => {},
+	fullResumes: [],
+	setFullResumes: () => {},
 };
 
 const ResumeContext = createContext<ResumeContext>(initialContext);
 
 const ResumeProvider = ({ children }: { children: React.ReactNode }) => {
 	const [resumeData, setResumeData] = useState<ResumeData | null>({
+		id: "cv-teste",
 		personalInfo: {
 			fullName: "Thiago Fidêncio",
 			profileImg: "https://via.placeholder.com/150",
@@ -92,8 +101,20 @@ const ResumeProvider = ({ children }: { children: React.ReactNode }) => {
 		],
 	});
 
+	const [fullResumes, setFullResumes] = useState<ResumeData[]>([]);
+	const [simpleResumes, setSimpleResumes] = useState<SimpleResume[]>([]);
+
 	return (
-		<ResumeContext.Provider value={{ resumeData, setResumeData }}>
+		<ResumeContext.Provider
+			value={{
+				resumeData,
+				setResumeData,
+				simpleResumes,
+				setSimpleResumes,
+				fullResumes,
+				setFullResumes,
+			}}
+		>
 			{children}
 		</ResumeContext.Provider>
 	);

@@ -36,11 +36,12 @@ import {
 const EditorForm = () => {
 	const [selectedBlock, setSelectedBlock] = useState<string>("about");
 	const {
+		resumeData,
+		getResume,
 		addLink,
 		updateLink,
 		deleteLink,
 		addBlock,
-		resumeData,
 		deleteBlock,
 		changeBlockTitle,
 		toggleBlockView,

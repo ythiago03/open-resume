@@ -5,15 +5,63 @@ import {
 	AboutBlock,
 	CvSocialLink,
 	ProjectsBlock,
+	ResumeData,
+	SimpleResume,
 	SkillsBlock,
 } from "@/types/ResumeData";
 
 const useCVEditor = () => {
-	const { resumeData, setResumeData } = useContext(ResumeContext);
+	const {
+		resumeData,
+		setResumeData,
+		simpleResumes,
+		setSimpleResumes,
+		fullResumes,
+		setFullResumes,
+	} = useContext(ResumeContext);
 
 	if (!resumeData || !setResumeData) {
 		throw new Error("useCVEditor must be used within a ResumeProvider");
 	}
+
+	const createNewResume = (): string => {
+		const id = crypto.randomUUID();
+
+		const newResume: SimpleResume = {
+			id,
+			name: "New Resume",
+			isPublic: false,
+			template: "minimal",
+			lastEdited: Date.now(),
+			publicURL: "",
+		};
+		const newResumeData: ResumeData = {
+			id,
+			personalInfo: {
+				fullName: "",
+				profileImg: "",
+				tagline: "",
+				bio: "",
+				location: "",
+			},
+			socialLinks: [],
+			blocks: [],
+		};
+
+		setSimpleResumes([...simpleResumes, newResume]);
+		setFullResumes([...fullResumes, newResumeData]);
+
+		return id;
+	};
+
+	const deleteResume = (id: string) => {
+		setSimpleResumes(simpleResumes.filter((resume) => resume.id !== id));
+		setFullResumes(fullResumes.filter((resume) => resume.id !== id));
+	};
+
+	const getResume = (id: string) => {
+		return fullResumes.find((resume) => resume.id === id);
+	};
 
 	// Links Section
 
@@ -276,6 +324,11 @@ const useCVEditor = () => {
 	};
 
 	return {
+		resumeData,
+		simpleResumes,
+		createNewResume,
+		deleteResume,
+		getResume,
 		addLink,
 		updateLink,
 		deleteLink,
@@ -290,7 +343,6 @@ const useCVEditor = () => {
 		addProject,
 		deleteProject,
 		updateProject,
-		resumeData,
 		setResumeData,
 	};
 };
