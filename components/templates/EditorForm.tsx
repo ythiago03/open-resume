@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import useCVEditor from "@/hooks/useCVEditor";
 
@@ -32,6 +32,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "../ui/accordion";
+import { useParams } from "next/navigation";
 
 const EditorForm = () => {
 	const [selectedBlock, setSelectedBlock] = useState<string>("about");
@@ -54,11 +55,20 @@ const EditorForm = () => {
 		deleteProject,
 		setResumeData: changeResumeData,
 	} = useCVEditor();
+	const params = useParams();
+	const resumeId = params.id ? params.id[0] : null;
 
 	const convertTags = (tags: string) => {
 		const tagsArray = tags.split(",");
 		return tagsArray.map((tag) => tag.trim());
 	};
+
+	useEffect(() => {
+		if (resumeId) {
+			const resume = getResume(resumeId);
+			console.log(resume);
+		}
+	}, []);
 
 	return (
 		<form className="overflow-y-auto">

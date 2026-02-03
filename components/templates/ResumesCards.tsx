@@ -7,6 +7,7 @@ import {
 	Download,
 	EllipsisVertical,
 	Eye,
+	EyeClosed,
 	FileText,
 	Trash2,
 } from "lucide-react";
@@ -25,9 +26,19 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import NewResumeBtn from "../common/NewResumeBtn";
+import { use, useEffect, useState } from "react";
+import { get } from "http";
+import { FullResume } from "@/types/ResumeData";
+import { Button } from "../ui/button";
 
 const ResumesCards = () => {
-	const { simpleResumes } = useCVEditor();
+	const {
+		getAllResumes,
+		deleteResume,
+		changeResumeVisibility,
+		duplicateResume,
+	} = useCVEditor();
+	const [resumes, setResumes] = useState<FullResume[]>([]);
 
 	const formatDate = (date: number) => {
 		const convertedDate = new Date(date);
@@ -39,7 +50,34 @@ const ResumesCards = () => {
 		}).format(convertedDate);
 	};
 
-	if (simpleResumes.length === 0) {
+	const getResumes = () => {
+		const resumes = getAllResumes();
+
+		if (resumes) {
+			setResumes(resumes);
+		}
+	};
+
+	const deleteCv = (id: string) => {
+		deleteResume(id);
+		getResumes();
+	};
+
+	const changeVisibility = (id: string) => {
+		changeResumeVisibility(id);
+		getResumes();
+	};
+
+	const duplicate = (id: string) => {
+		duplicateResume(id);
+		getResumes();
+	};
+
+	useEffect(() => {
+		getResumes();
+	}, []);
+
+	if (resumes.length === 0) {
 		return (
 			<section className="container mx-auto p-6">
 				<Card className="w-full flex items-center p-6">
@@ -59,7 +97,7 @@ const ResumesCards = () => {
 
 	return (
 		<section className="container mx-auto p-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-			{simpleResumes.map(({ id, name, template, lastEdited, isPublic }) => (
+			{resumes.map(({ id, name, template, lastEdited, isPublic }) => (
 				<Card
 					key={id}
 					className="py-0 relative transition-shadow hover:shadow-lg"
@@ -72,24 +110,32 @@ const ResumesCards = () => {
 							<DropdownMenuItem className="cursor-pointer">
 								<FileText /> Edit
 							</DropdownMenuItem>
-							<DropdownMenuItem className="cursor-pointer">
+							<DropdownMenuItem
+								className="cursor-pointer"
+								onClick={() => duplicate(id)}
+							>
 								<Copy /> Duplicate
 							</DropdownMenuItem>
-							{isPublic ? (
-								<DropdownMenuItem className="cursor-pointer">
-									<Eye /> View Public
-								</DropdownMenuItem>
-							) : (
-								<DropdownMenuItem className="cursor-pointer">
-									{" "}
-									<Eye /> Turn Public
-								</DropdownMenuItem>
-							)}
+							<DropdownMenuItem
+								className="cursor-pointer"
+								onClick={() => changeVisibility(id)}
+							>
+								{isPublic ? (
+									<>
+										<EyeClosed /> Turn Private
+									</>
+								) : (
+									<>
+										<Eye /> Turn Public
+									</>
+								)}
+							</DropdownMenuItem>
 							<DropdownMenuItem className="cursor-pointer">
 								<Download /> Download PDF
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								className="cursor-pointer"
+								onClick={() => deleteCv(id)}
 								variant="destructive"
 							>
 								<Trash2 />
@@ -98,7 +144,7 @@ const ResumesCards = () => {
 						</DropdownMenuContent>
 					</DropdownMenu>
 
-					<Link className="h-full py-6" href="/">
+					<Link className="h-full py-6" href={`/cv/${id}`}>
 						<CardHeader>
 							<div className="mb-4 flex h-48 items-center justify-center rounded-lg border border-border bg-muted">
 								<FileText className="h-16 w-16 text-muted-foreground" />

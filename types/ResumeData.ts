@@ -1,5 +1,4 @@
 export interface ResumeData {
-	id: string;
 	personalInfo: {
 		fullName: string;
 		profileImg: string;
@@ -60,11 +59,12 @@ export type ProjectsBlock = CvBlockBase<
 	}
 >;
 
-export type SimpleResume = {
+export type FullResume = {
 	id: string;
 	name: string;
 	template: string;
 	isPublic: boolean;
 	lastEdited: number;
 	publicURL: string;
+	content: ResumeData;
 };

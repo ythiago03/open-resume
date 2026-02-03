@@ -4,21 +4,13 @@ import { ResumeContext } from "@/context/ResumeContext";
 import {
 	AboutBlock,
 	CvSocialLink,
+	FullResume,
 	ProjectsBlock,
-	ResumeData,
-	SimpleResume,
 	SkillsBlock,
 } from "@/types/ResumeData";
 
 const useCVEditor = () => {
-	const {
-		resumeData,
-		setResumeData,
-		simpleResumes,
-		setSimpleResumes,
-		fullResumes,
-		setFullResumes,
-	} = useContext(ResumeContext);
+	const { resumeData, setResumeData } = useContext(ResumeContext);
 
 	if (!resumeData || !setResumeData) {
 		throw new Error("useCVEditor must be used within a ResumeProvider");
@@ -27,40 +19,125 @@ const useCVEditor = () => {
 	const createNewResume = (): string => {
 		const id = crypto.randomUUID();
 
-		const newResume: SimpleResume = {
+		const newResume: FullResume = {
 			id,
 			name: "New Resume",
 			isPublic: false,
 			template: "minimal",
 			lastEdited: Date.now(),
 			publicURL: "",
-		};
-		const newResumeData: ResumeData = {
-			id,
-			personalInfo: {
-				fullName: "",
-				profileImg: "",
-				tagline: "",
-				bio: "",
-				location: "",
+			content: {
+				personalInfo: {
+					fullName: "",
+					profileImg: "",
+					tagline: "",
+					bio: "",
+					location: "",
+				},
+				socialLinks: [],
+				blocks: [],
 			},
-			socialLinks: [],
-			blocks: [],
 		};
 
-		setSimpleResumes([...simpleResumes, newResume]);
-		setFullResumes([...fullResumes, newResumeData]);
+		const storagedResumes = localStorage.getItem("storagedResumes");
 
+		if (storagedResumes) {
+			const resumes = JSON.parse(storagedResumes);
+			resumes.push(newResume);
+			localStorage.setItem("storagedResumes", JSON.stringify(resumes));
+			return id;
+		}
+
+		localStorage.setItem("storagedResumes", JSON.stringify([newResume]));
 		return id;
 	};
 
 	const deleteResume = (id: string) => {
-		setSimpleResumes(simpleResumes.filter((resume) => resume.id !== id));
-		setFullResumes(fullResumes.filter((resume) => resume.id !== id));
+		const storagedResumes = localStorage.getItem("storagedResumes");
+
+		if (storagedResumes) {
+			const resumes: FullResume[] = JSON.parse(storagedResumes);
+			const newResumes = resumes.filter((resume) => resume.id !== id);
+
+			localStorage.setItem("storagedResumes", JSON.stringify(newResumes));
+		}
+	};
+
+	const duplicateResume = (resumeCopyId: string) => {
+		const storagedResumes = localStorage.getItem("storagedResumes");
+
+		if (storagedResumes) {
+			const resumes: FullResume[] = JSON.parse(storagedResumes);
+			const resume = resumes.find((resume) => resume.id === resumeCopyId);
+			if (!resume) return;
+			setResumeData(resume.content);
+
+			const newResume = {
+				...resume,
+				id: crypto.randomUUID(),
+				name: `${resume.name} Copy`,
+			};
+			resumes.push(newResume);
+			localStorage.setItem("storagedResumes", JSON.stringify(resumes));
+		}
+	};
+
+	const getAllResumes = () => {
+		const storagedResumes = localStorage.getItem("storagedResumes");
+
+		if (storagedResumes) {
+			const resumes: FullResume[] = JSON.parse(storagedResumes);
+			return resumes;
+		}
+		return null;
 	};
 
 	const getResume = (id: string) => {
-		return fullResumes.find((resume) => resume.id === id);
+		const storagedResumes = localStorage.getItem("storagedResumes");
+
+		if (storagedResumes) {
+			const resumes: FullResume[] = JSON.parse(storagedResumes);
+			const resume = resumes.find((resume) => resume.id === id);
+			if (!resume) return null;
+			setResumeData(resume.content);
+			return resume;
+		}
+		return null;
+	};
+
+	const saveResume = (id: string) => {
+		const storagedResumes = localStorage.getItem("storagedResumes");
+
+		if (storagedResumes) {
+			const resumes: FullResume[] = JSON.parse(storagedResumes);
+
+			resumes.forEach((resume) => {
+				if (resume.id === id) {
+					resume.content = resumeData;
+					resume.lastEdited = Date.now();
+				}
+			});
+			localStorage.setItem("storagedResumes", JSON.stringify(resumes));
+		}
+	};
+
+	const changeResumeVisibility = (id: string) => {
+		const storagedResumes = localStorage.getItem("storagedResumes");
+
+		if (storagedResumes) {
+			const resumes: FullResume[] = JSON.parse(storagedResumes);
+			const updatedResumes = resumes.map((resume) => {
+				if (resume.id === id) {
+					return {
+						...resume,
+						isPublic: !resume.isPublic,
+					};
+				}
+
+				return resume;
+			});
+			localStorage.setItem("storagedResumes", JSON.stringify(updatedResumes));
+		}
 	};
 
 	// Links Section
@@ -325,10 +402,13 @@ const useCVEditor = () => {
 
 	return {
 		resumeData,
-		simpleResumes,
+		saveResume,
 		createNewResume,
 		deleteResume,
+		duplicateResume,
+		getAllResumes,
 		getResume,
+		changeResumeVisibility,
 		addLink,
 		updateLink,
 		deleteLink,
