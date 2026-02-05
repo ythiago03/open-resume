@@ -6,6 +6,7 @@ import {
 	CvSocialLink,
 	FullResume,
 	ProjectsBlock,
+	ResumeData,
 	SkillsBlock,
 } from "@/types/ResumeData";
 
@@ -82,6 +83,22 @@ const useCVEditor = () => {
 		}
 	};
 
+	const saveResume = (id: string, data: ResumeData) => {
+		const storagedResumes = localStorage.getItem("storagedResumes");
+
+		if (storagedResumes) {
+			const resumes: FullResume[] = JSON.parse(storagedResumes);
+			const updatedResumes = resumes.map((resume) => {
+				if (resume.id === id) {
+					return { ...resume, lastEdited: Date.now(), content: data };
+				}
+
+				return resume;
+			});
+			localStorage.setItem("storagedResumes", JSON.stringify(updatedResumes));
+		}
+	};
+
 	const getAllResumes = () => {
 		const storagedResumes = localStorage.getItem("storagedResumes");
 
@@ -105,21 +122,21 @@ const useCVEditor = () => {
 		return null;
 	};
 
-	const saveResume = (id: string) => {
-		const storagedResumes = localStorage.getItem("storagedResumes");
+	// const saveResume = (id: string) => {
+	// 	const storagedResumes = localStorage.getItem("storagedResumes");
 
-		if (storagedResumes) {
-			const resumes: FullResume[] = JSON.parse(storagedResumes);
+	// 	if (storagedResumes) {
+	// 		const resumes: FullResume[] = JSON.parse(storagedResumes);
 
-			resumes.forEach((resume) => {
-				if (resume.id === id) {
-					resume.content = resumeData;
-					resume.lastEdited = Date.now();
-				}
-			});
-			localStorage.setItem("storagedResumes", JSON.stringify(resumes));
-		}
-	};
+	// 		resumes.forEach((resume) => {
+	// 			if (resume.id === id) {
+	// 				resume.content = resumeData;
+	// 				resume.lastEdited = Date.now();
+	// 			}
+	// 		});
+	// 		localStorage.setItem("storagedResumes", JSON.stringify(resumes));
+	// 	}
+	// };
 
 	const changeResumeVisibility = (id: string) => {
 		const storagedResumes = localStorage.getItem("storagedResumes");

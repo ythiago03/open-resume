@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 import { ResumeData } from "@/types/ResumeData";
 
 interface ResumeContext {
-	resumeData: ResumeData;
+	resumeData: ResumeData | null;
 	setResumeData: (data: ResumeData) => void;
 	fullResumes: ResumeData[];
 	setFullResumes: (data: ResumeData[]) => void;

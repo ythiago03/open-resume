@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Download, Eye, FileText, Save } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import EditorForm from "@/components/templates/EditorForm";
 import EditorPreview from "@/components/templates/EditorPreview";
 import { ResumeProvider } from "@/context/ResumeContext";
+import ResumeEdit from "@/components/templates/ResumeEdit";
 
 const page = () => {
 	return (
@@ -39,18 +40,7 @@ const page = () => {
 							</Link>
 						</div>
 
-						<div className="flex items-center gap-4">
-							<span className="text-muted-foreground">Saved</span>
-							<Button className="cursor-pointer" variant="outline">
-								<Save /> Save
-							</Button>
-							<Button className="cursor-pointer" variant="outline">
-								<Download /> Export
-							</Button>
-							<Button className="cursor-pointer">
-								<Eye /> Preview
-							</Button>
-						</div>
+						<ResumeEdit />
 					</div>
 				</header>
 
