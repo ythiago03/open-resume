@@ -54,6 +54,7 @@ export default function Home() {
 			Icon: PanelsTopLeft,
 		},
 	];
+
 	return (
 		<div>
 			<Header />
@@ -81,7 +82,7 @@ export default function Home() {
 								className="w-full sm:w-auto font-semibold cursor-pointer"
 								asChild
 							>
-								<Link href="/">Start Building Free</Link>
+								<Link href="/dashboard">Start Building Free</Link>
 							</Button>
 							<Button
 								size="lg"
@@ -141,8 +142,9 @@ export default function Home() {
 							<Button
 								variant="secondary"
 								className="w-full max-w-sm font-semibold cursor-pointer"
+								asChild
 							>
-								Get Started Now
+								<Link href="/dashboard">Get Started Now</Link>
 							</Button>
 						</div>
 					</div>

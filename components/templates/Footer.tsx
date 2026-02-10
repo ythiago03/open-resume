@@ -33,7 +33,7 @@ const Footer = () => {
 						</Link>
 						<Link
 							className="flex gap-2 w-fit items-center text-lg text-muted-foreground hover:text-primary transition-colors"
-							href="http://thiagof.com"
+							href="https://github.com/ythiago03/open-resume"
 							target="_blank"
 						>
 							<Github />
