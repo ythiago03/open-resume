@@ -6,9 +6,23 @@ import { FileText } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "../ui/dialog";
 
 const Header = () => {
 	const router = useRouter();
+
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+	useEffect(() => {
+		setIsDialogOpen(true);
+	}, []);
 
 	return (
 		<header className="sticky top-0 z-50 border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,6 +65,19 @@ const Header = () => {
 					</Button>
 				</div>
 			</div>
+
+			<Dialog open={isDialogOpen} onOpenChange={() => setIsDialogOpen(false)}>
+				<DialogContent className="bg-yellow-100">
+					<DialogHeader>
+						<DialogTitle>⚠️ This is a demo project!</DialogTitle>
+						<DialogDescription>
+							This project is currently in development, and this page is for
+							demonstration purposes only. It may contain bugs and unfinished
+							features that will not be present in the final version.
+						</DialogDescription>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
 		</header>
 	);
 };
