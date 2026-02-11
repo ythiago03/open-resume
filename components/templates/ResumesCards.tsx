@@ -26,11 +26,8 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import NewResumeBtn from "../common/NewResumeBtn";
-import { use, useEffect, useState } from "react";
-import { get } from "http";
+import { useEffect, useState } from "react";
 import { FullResume } from "@/types/ResumeData";
-import { Button } from "../ui/button";
-
 const ResumesCards = () => {
 	const {
 		getAllResumes,
@@ -97,7 +94,7 @@ const ResumesCards = () => {
 
 	return (
 		<section className="container mx-auto p-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-			{resumes.map(({ id, name, template, lastEdited, isPublic }) => (
+			{resumes.map(({ id, content, template, lastEdited, isPublic }) => (
 				<Card
 					key={id}
 					className="py-0 relative transition-shadow hover:shadow-lg"
@@ -149,7 +146,7 @@ const ResumesCards = () => {
 							<div className="mb-4 flex h-48 items-center justify-center rounded-lg border border-border bg-muted">
 								<FileText className="h-16 w-16 text-muted-foreground" />
 							</div>
-							<CardTitle className="text-lg">{name}</CardTitle>
+							<CardTitle className="text-lg">{content.fileName}</CardTitle>
 							<div className="flex justify-between capitalize text-muted-foreground">
 								<span>{template}</span>
 								<span>{formatDate(lastEdited)}</span>

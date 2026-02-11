@@ -66,7 +66,6 @@ const EditorForm = () => {
 	useEffect(() => {
 		if (resumeId) {
 			const resume = getResume(resumeId);
-			console.log(resume);
 		}
 	}, []);
 

@@ -1,4 +1,5 @@
 export interface ResumeData {
+	fileName: string;
 	personalInfo: {
 		fullName: string;
 		profileImg: string;
@@ -61,7 +62,6 @@ export type ProjectsBlock = CvBlockBase<
 
 export type FullResume = {
 	id: string;
-	name: string;
 	template: string;
 	isPublic: boolean;
 	lastEdited: number;

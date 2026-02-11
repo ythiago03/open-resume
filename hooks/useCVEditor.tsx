@@ -22,12 +22,12 @@ const useCVEditor = () => {
 
 		const newResume: FullResume = {
 			id,
-			name: "New Resume",
 			isPublic: false,
 			template: "minimal",
 			lastEdited: Date.now(),
 			publicURL: "",
 			content: {
+				fileName: "New Resume",
 				personalInfo: {
 					fullName: "",
 					profileImg: "",
@@ -76,7 +76,10 @@ const useCVEditor = () => {
 			const newResume = {
 				...resume,
 				id: crypto.randomUUID(),
-				name: `${resume.name} Copy`,
+				content: {
+					...resume.content,
+					fileName: `${resume.content.fileName} Copy`,
+				},
 			};
 			resumes.push(newResume);
 			localStorage.setItem("storagedResumes", JSON.stringify(resumes));
@@ -414,7 +417,6 @@ const useCVEditor = () => {
 					: block,
 			),
 		});
-		console.log(resumeData);
 	};
 
 	return {
