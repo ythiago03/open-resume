@@ -147,9 +147,12 @@ const EditorPreview = () => {
 				<p className="text-lg md:text-xl mt-4 text-muted-foreground max-w-xl">
 					{resumeData.personalInfo.tagline}
 				</p>
-				<span className="flex items-center mt-2 gap-2 text-sm text-muted-foreground">
-					<MapPin className="size-4" /> {resumeData.personalInfo.location}
-				</span>
+
+				{resumeData.personalInfo.location && (
+					<span className="flex items-center mt-2 gap-2 text-sm text-muted-foreground">
+						<MapPin className="size-4" /> {resumeData.personalInfo.location}
+					</span>
+				)}
 				<p className="text-lg mt-4 text-muted-foreground max-w-2xl">
 					{resumeData.personalInfo.bio}
 				</p>
